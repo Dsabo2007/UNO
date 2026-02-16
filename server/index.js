@@ -10,9 +10,10 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
     cors: {
-        origin: process.env.FRONTEND_URL || "http://localhost:5173", // Dynamic for production
+        origin: "*", // Allow all origins temporarily for debugging
         methods: ["GET", "POST"]
-    }
+    },
+    transports: ['websocket', 'polling'] // Prefer websocket
 });
 
 // Store active rooms
