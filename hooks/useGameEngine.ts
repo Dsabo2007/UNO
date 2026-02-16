@@ -3,7 +3,7 @@ import { GameState, GameStatus, Player, Card, CardColor, CardType, GameRules } f
 import { generateDeck, shuffleDeck, isValidPlay, getAIPlay, getNextPlayerIndex, getBestColor } from '../utils/gameUtils';
 import { playSound } from '../utils/sound';
 import confetti from 'canvas-confetti';
-import { socket } from '../services/socketService';
+import { socket } from '../src/services/socketService';
 
 const INITIAL_HAND_SIZE = 7;
 

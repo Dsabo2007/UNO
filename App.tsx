@@ -7,7 +7,7 @@ import { GameStatus, CardColor, CardType, GameRules, Player } from './types';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Play, RotateCcw, User, Users, Cpu, ChevronRight, ChevronLeft, Trophy, Crown, Settings, Volume2, VolumeX, Music, Zap, X, AlertTriangle, Skull, Sliders, CheckCircle, Globe, Search, PlusCircle, Wifi, Copy, Hash } from 'lucide-react';
 import { getNextPlayerIndex } from './utils/gameUtils';
-import { socket } from './services/socketService';
+import { socket } from './src/services/socketService';
 
 // --- Sub-components for Lobby ---
 
