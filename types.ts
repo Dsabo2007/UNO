@@ -25,7 +25,7 @@ export interface Card {
 }
 
 export interface Player {
-  id: number;
+  id: number | string;
   name: string;
   isHuman: boolean;
   hand: Card[];

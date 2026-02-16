@@ -320,24 +320,51 @@ export default function App() {
             setTimeout(() => setMpError(''), 3000);
         };
 
+        const onConnect = () => {
+            console.log("Connected to server");
+            setMpError('');
+        };
+
+        const onConnectError = (err: Error) => {
+            console.error("Connection error:", err);
+            setMpError(`Failed to connect to server: ${err.message}`);
+        };
+
+        const onDisconnect = () => {
+            console.log("Disconnected from server");
+        };
+
         socket.on('room_created', onRoomCreated);
         socket.on('player_joined', onPlayerJoined);
         socket.on('error', onError);
-        socket.on('connect', () => {
-            console.log("Connected to server");
-        });
+        socket.on('connect', onConnect);
+        socket.on('connect_error', onConnectError);
+        socket.on('disconnect', onDisconnect);
 
         return () => {
             socket.off('room_created', onRoomCreated);
             socket.off('player_joined', onPlayerJoined);
             socket.off('error', onError);
-            socket.off('connect');
+            socket.off('connect', onConnect);
+            socket.off('connect_error', onConnectError);
+            socket.off('disconnect', onDisconnect);
         };
     }, [mpPlayerName, menuView]);
 
+    const [isConnecting, setIsConnecting] = useState(false);
+
     const handleCreateRoom = () => {
-        if (!socket.connected) socket.connect();
+        if (!mpPlayerName.trim()) {
+            setMpError('Please enter your name');
+            return;
+        }
+        setIsConnecting(true);
+        if (!socket.connected) {
+            socket.connect();
+        }
         socket.emit('create_room', { playerName: mpPlayerName });
+        // Timeout to stop loading if no response
+        setTimeout(() => setIsConnecting(false), 5000);
     };
 
     const handleJoinRoom = () => {
@@ -778,11 +805,17 @@ export default function App() {
                                                 <input
                                                     value={mpPlayerName}
                                                     onChange={(e) => setMpPlayerName(e.target.value)}
+                                                    placeholder="Enter your name"
                                                     className="w-full bg-black/40 border border-white/10 rounded p-3 text-white focus:border-cyan-500 outline-none"
                                                 />
                                             </div>
-                                            <button onClick={handleCreateRoom} className="w-full bg-orange-600 hover:bg-orange-500 text-white font-bold py-3 rounded-xl">
-                                                CREATE
+                                            {mpError && <div className="text-red-500 text-xs bg-red-500/10 p-2 rounded border border-red-500/20">{mpError}</div>}
+                                            <button
+                                                onClick={handleCreateRoom}
+                                                disabled={isConnecting}
+                                                className={`w-full text-white font-bold py-3 rounded-xl transition-all ${isConnecting ? 'bg-orange-800 cursor-wait' : 'bg-orange-600 hover:bg-orange-500'}`}
+                                            >
+                                                {isConnecting ? 'CONNECTING...' : 'CREATE'}
                                             </button>
                                         </div>
                                     ) : (
